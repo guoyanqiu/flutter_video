@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -53,12 +54,47 @@ class _PlayInMobileState extends State<PlayInMobileStatefulWidget> {
 
   VoidCallback _listener;
   bool isPauseByUser = false;
+  bool goOn=false;
+
+  void _showDemoDialog({BuildContext context, Widget child}) {
+    showCupertinoDialog<bool>(
+      context: context,
+      builder: (BuildContext context) => child,
+    ).then((bool value) {
+      if (value != null) {
+        setState(() { goOn = value; });
+      }
+    });
+  }
+
 
   _PlayInMobileState({@required this.controller}) {
     _listener = () {
-      if (mounted) {
+      if (!mounted) {
         return;
       }
+//      _showDemoDialog(
+//        context: context,
+//        child: CupertinoAlertDialog(
+//          title: const Text('Discard draft?'),
+//          actions: <Widget>[
+//            CupertinoDialogAction(
+//              child: const Text('播放'),
+//              isDestructiveAction: true,
+//              onPressed: () {
+//                Navigator.pop(context, true);
+//              },
+//            ),
+//            CupertinoDialogAction(
+//              child: const Text('暂停'),
+//              isDefaultAction: true,
+//              onPressed: () {
+//                Navigator.pop(context, false);
+//              },
+//            ),
+//          ],
+//        ),
+//      );
       setState(() {
         print("------手机网络----" + controller.value.isPlaying.toString());
         if (controller.value.isPlaying && !isPauseByUser) {
@@ -72,6 +108,7 @@ class _PlayInMobileState extends State<PlayInMobileStatefulWidget> {
   void initState() {
     super.initState();
     controller.addListener(_listener);
+
   }
 
   @override
@@ -82,6 +119,7 @@ class _PlayInMobileState extends State<PlayInMobileStatefulWidget> {
 
   ///创建播放中的视频界面
   Widget _buildPlayingWidget() {
+
     return AspectRatio(
         aspectRatio: 3 / 2,
         child: GestureDetector(
@@ -93,10 +131,37 @@ class _PlayInMobileState extends State<PlayInMobileStatefulWidget> {
               controller.play();
             }
           },
-          child: VideoPlayer(controller),
+//            child:VideoPlayer(controller),
+          child: Stack(
+            children: <Widget>[
+              VideoPlayer(controller),
+              _alertWidget()
+            ],
+          )
         ));
   }
 
+  Widget _alertWidget(){
+   return Center(
+      child: Container(
+          child:Column(
+             children: <Widget>[
+               Text("当前为移动网络，继续播放？"),
+               Center(child:Row(
+                 children: <Widget>[
+                   GestureDetector(
+                     child: Text("播放"),
+                   ),
+                   GestureDetector(
+                     child: Text("暂停"),
+                   ),
+                 ],
+               ))
+             ],
+          )
+      ),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return _buildPlayingWidget();

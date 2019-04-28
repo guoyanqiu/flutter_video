@@ -52,7 +52,7 @@ class _VideoState extends State<VideoMonitorConnect> {
       body:  Center(
           child: _isInit?ConnectWidget(
                wifiConnectWidget:PlayInWifiStatelessWidget(controller: controller,),
-               mobileConnectWidget: PlayInMobileStatelessWidget(controller: controller,),
+               mobileConnectWidget: PlayInMobileStatefulWidget(controller: controller,),
                noneConnectWidget: PlayNonConnectStatelessWidget(controller: controller,)
           ):PlayNonConnectStatelessWidget(controller: controller,)
       ),
